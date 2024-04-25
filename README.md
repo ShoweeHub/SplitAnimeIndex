@@ -1,3 +1,3 @@
 # split + parallex 版
 
-暂定
+查看：https://showeehub.github.io/SplitAnimeIndex/
