@@ -1,99 +1,43 @@
 <!DOCTYPE html>
 <html lang="zh">
 
-
 <head>
     <meta charset="UTF-8">
     <title>守一Showee的个人主页</title>
     <meta content="IE=edge,chrome=1" http-equiv="X-UA-Compatible" />
     <meta content="守一Showee的个人主页" name="description">
     <meta content="width=device-width, initial-scale=1.0" name="viewport">
-    <link href="css/parallax.css" rel="stylesheet">
+    <link rel="icon" href="favicon.png" type="image/png">
+
     <link href="css/split-screen.css" rel="stylesheet">
+    <script defer src="js/split-screen.js"></script>
 </head>
 
 <body>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/parallax/3.1.0/parallax.min.js"></script>
-
-    <!-- <div id="scene">
-
-        <div class="layer" data-depth="10">
-            <img src="favicon.ico">
-        </div>
-
-        <div class="layer" data-depth="2">
-            <img src="favicon.ico">
-        </div>
-    </div> -->
-
-    <!-- <div class="splitview skewed"> -->
-    <div class="splitview">
-        <div class="panel bottom">
-            <div class="content">
-                <!-- <div class="description">
-                    <h1>The original image.</h1>
-                    <p>This is how the image looks like before applying a duotone effect.</p>
-                </div> -->
-
-                <!-- <img src="https://s3-us-west-2.amazonaws.com/s.cdpn.io/210284/original-image.jpg" alt="Original"> -->
-                <div id="scene1" class="scene"></div>
-            </div>
-        </div>
-
-        <div class="panel top">
-            <div class="content">
-                <div class="description">
-                    <h1>守一Showee</h1>
-                    <p>❤️～关注守一Showee喵,关注守一Showee谢谢喵~❤️</p>
-                </div>
-
-                <img src="favicon.ico">
-                <!-- <div id="scene2" class="scene"></div> -->
-            </div>
-        </div>
-
-        <div class="handle"></div>
+    <!-- 背后灰色的部分 -->
+    <div id="bottom" class="panel">
+        <!-- 在这里面绘制许多大头 -->
+        <div id="scene"></div>
     </div>
-    <script src="js/split-screen.js"></script>
 
+    <!-- 紫色的部分 -->
+    <div id="top" class="panel">
+        <!-- 点击可以跳转到 Bilibili 个人主页 -->
+        <a href="https://space.bilibili.com/3493110847900630/" id="description" target="_blank">
+            <h1>守一Showee</h1>
+            <p>关注守一Showee喵，关注守一Showee谢谢喵️</p>
+        </a>
+    </div>
 
+    <!-- 中间可以拖动的分割线 -->
+    <div id="handle"></div>
+    <!-- 中间的守一大头 -->
+    <img id="mid-avatar" class="avatar" src="favicon.png">
+    <!-- TIP -->
+    <div id="tip">中间的分割线是可以拖动的哦~~</div>
 
-    <script>
-        document.addEventListener("DOMContentLoaded", function () {
-            const scene = document.getElementById('scene1');
-            const depthValues = Array.from({ length: 100 }, (_, index) => 100 - index - 1);
-
-            for (let i = 0; i < depthValues.length; i++) {
-                const layer = document.createElement('div');
-                layer.className = 'layer';
-                layer.setAttribute('data-depth', depthValues[i]);
-                const img = document.createElement('img');
-                img.src = "favicon.ico";
-                layer.appendChild(img);
-                scene.appendChild(layer);
-            }
-
-            new Parallax(scene);
-        });
-
-        document.addEventListener("DOMContentLoaded", function () {
-            const scene = document.getElementById('scene2');
-            const depthValues = Array.from({ length: 1 }, (_, index) => 1 - index);
-
-            for (let i = 0; i < depthValues.length; i++) {
-                const layer = document.createElement('div');
-                layer.className = 'layer';
-                layer.setAttribute('data-depth', depthValues[i]);
-                const img = document.createElement('img');
-                img.src = "favicon.ico";
-                layer.appendChild(img);
-                scene.appendChild(layer);
-            }
-
-            new Parallax(scene);
-        });
-    </script>
-    <script src="js/parallax.js"></script>
+    <!-- 重置按钮，点击后分割线恢复到原位 -->
+    <img id="reset" src="img/reset.svg" alt="reset" />
 </body>
 
 </html>

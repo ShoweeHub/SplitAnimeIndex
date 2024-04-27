@@ -1,124 +1,219 @@
-Reset. {
-    box-sizing: border-box;
-}
-
 body,
 html {
-    height: 100%;
+    height: 100vh;
+    height: 100dvh;
     width: 100%;
     margin: 0;
     overflow: hidden;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+    /* 禁止用户选中，防止在拖动过程中选中文字，进而在拖动分割线时也会拖动选中的内容，体验不太好 */
+    user-select: none;
+    -moz-user-select: none;
+    -webkit-user-select: none;
 }
 
-/* Panels. */
-.splitview {
-    position: relative;
-    width: 100%;
-    height: 100%;
-    overflow: hidden;
+/* 禁用图片与链接的拖动功能 */
+a,
+img {
+    -webkit-user-drag: none;
+}
+
+a {
+    text-decoration: none;
+}
+
+.avatar {
+    aspect-ratio: 1;
+    position: fixed;
+    inset: 0;
+    margin: auto;
 }
 
 .panel {
-    position: absolute;
-    width: 100vw;
+    position: fixed;
+}
+
+#bottom {
+    width: 100%;
     height: 100%;
+    background-color: rgb(44, 44, 44);
+}
+
+#scene > .avatar {
+    transition: 0.4s ease-out;
+}
+
+#top {
     overflow: hidden;
+    background-color: rgb(77, 69, 173);
 }
 
-.panel .content {
+#description {
+    color: white;
+    text-shadow: 0.5rem 0.5rem 0.5rem rgba(0, 0, 0, 0.5);
     position: absolute;
-    width: 100vw;
-    height: 100%;
-    color: #FFF;
-}
-
-.panel .description {
-    width: 25%;
-    position: absolute;
-    top: 50%;
-    transform: translateY(-50%);
     text-align: center;
 }
 
-.panel img {
-    box-shadow: 0 0 20px 20px rgba(0, 0, 0, 0.15);
-    width: 20%;
+/* 装饰性内容放在 before after 中，不写进 html 里 */
+#description > p {
+    position: relative;
+    max-width: 22rem;
+    margin: auto;
+}
+
+#description > p::before {
+    content: "❤️~";
     position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-}
-
-.panel .scene {
-    width: 100%;
-    position: absolute;
-    top: 50%;
-    /* left: 50%; */
-    /* transform: translate(-50%, -50%); */
-}
-
-
-.bottom {
-    background-color: rgb(44, 44, 44);
-    z-index: 1;
-}
-
-.bottom .description {
-    right: 5%;
-}
-
-.top {
-    background-color: rgb(77, 69, 173);
-    z-index: 2;
-    width: 50vw;
-
-    /*-webkit-clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%);
-    clip-path: polygon(60% 0, 100% 0, 100% 100%, 40% 100%);*/
-}
-
-.top .description {
-    left: 5%;
-}
-
-/* Handle. */
-.handle {
-    height: 100%;
-    position: absolute;
-    display: block;
-    background-color: rgb(253, 171, 0);
-    width: 5px;
+    left: -3rem;
     top: 0;
-    left: 50%;
-    z-index: 3;
 }
 
-/* Skewed. */
-.skewed .handle {
-    top: 50%;
-    transform: rotate(30deg) translateY(-50%);
-    height: 200%;
-    -webkit-transform-origin: top;
-    -moz-transform-origin: top;
-    transform-origin: top;
+#description > p::after {
+    content: "~❤️";
+    position: absolute;
+    right: -3rem;
+    top: 0;
 }
 
-.skewed .top {
-    transform: skew(-30deg);
-    margin-left: -1000px;
-    width: calc(50vw + 1000px);
+#mid-avatar {
+    background-color: rgba(0, 0, 0, 0.15);
+    pointer-events: none;
 }
 
-.skewed .top .content {
-    transform: skew(30deg);
-    margin-left: 1000px;
+#handle {
+    /* 用 CSS variable 定义粗细与两侧额外热区的大小，方便复用 */
+    --size: calc(3px + 0.5%);
+    --border: 10px;
+
+    /* position 定义为鼠标所在的位置 */
+    --position: 50%;
+    /* 
+     * 实际分割线所在位置需要做一定计算
+     * 需要向左/向上补偿一边透明边框和半个分割线宽度以居中
+     * top / left 为 0 时，分割线所有位置都在视口内，因此需要把一边透明边框给移出去，补偿一个边框的大小
+     * top / left 为 100 时，整个分割线都在视口外，因此要往里补偿整个分割线和内侧边框的大小
+     */
+    --realPosition: clamp(
+        calc(0% - var(--border)),
+        calc(var(--position) - var(--border) - var(--size) / 2),
+        calc(100% - var(--border) - var(--size))
+    );
+
+    position: fixed;
+    background-color: rgb(253, 171, 0);
+    background-clip: padding-box;
+    margin: auto;
+    cursor: pointer;
 }
 
-/* Responsive. */
-@media (max-width: 900px) {
-    body {
-        font-size: 75%;
+/* 宽度大于高度，即横向时 */
+@media (orientation: landscape) {
+    .avatar {
+        width: 20%;
     }
+    #top {
+        width: 50%;
+        height: 100%;
+    }
+    #description {
+        left: 10vw;
+        width: 20vw;
+        top: 50%;
+        transform: translateY(-50%);
+    }
+    #mid-avatar {
+        box-shadow: 1rem 1rem 1.5rem rgba(0, 0, 0, 0.15);
+    }
+    #handle {
+        height: 100dvh;
+        width: var(--size);
+        border-left: var(--border) solid transparent;
+        border-right: var(--border) solid transparent;
+        left: var(--realPosition);
+    }
+}
+
+/* 高度大于等于宽度，即纵向时 */
+@media (orientation: portrait) {
+    .avatar {
+        height: 20%;
+    }
+    #top {
+        height: 50%;
+        width: 100%;
+    }
+    #description {
+        margin: auto;
+        width: 60%;
+        top: 10dvh;
+        left: 0;
+        right: 0;
+    }
+    #mid-avatar {
+        box-shadow: -1rem 1rem 1.5rem rgba(0, 0, 0, 0.15);
+    }
+    #handle {
+        height: var(--size);
+        width: 100%;
+        border-top: var(--border) solid transparent;
+        border-bottom: var(--border) solid transparent;
+        top: var(--realPosition);
+    }
+}
+
+#tip {
+    color: white;
+    position: fixed;
+    bottom: -4rem;
+    left: 0;
+    right: 0;
+    text-align: center;
+    background-color: rgba(0, 0, 0, 0.4);
+    padding: 1rem 2rem;
+    width: 16rem;
+    height: 2rem;
+    line-height: 2rem;
+    border-radius: 2rem;
+    margin: auto;
+    animation: tip 4s;
+}
+
+/* 简单的回弹效果 */
+@keyframes tip {
+    0% {
+        bottom: -4rem;
+    }
+
+    10% {
+        bottom: 12dvh;
+    }
+
+    20% {
+        bottom: 10dvh;
+    }
+
+    80% {
+        bottom: 10dvh;
+    }
+
+    90% {
+        bottom: 12dvh;
+    }
+
+    100% {
+        bottom: -4rem;
+    }
+}
+/* 图片颜色在 svg 文件中的 fill 属性控制，不能在这里调整 */
+#reset {
+    position: fixed;
+    /* js 中通过改写 bottom 控制展示与否 */
+    bottom: 0;
+    right: calc(5% + 1rem);
+    width: 3rem;
+    height: 3rem;
+    fill: white;
+    transition: bottom 0.5s ease-in-out;
+    transform: translateY(100%);
+    cursor: pointer;
 }
